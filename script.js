@@ -8,6 +8,11 @@ calculatorButtonOperator.forEach(button => {
     button.addEventListener('click', buttonClick);
 })
 
+const calculatorButtonOperatorSpecial = document.querySelectorAll('.calculator .operator-special')
+calculatorButtonOperatorSpecial.forEach(button => {
+    button.addEventListener('click', buttonClickSpecial);
+})
+
 const calculatorButtonClear = document.querySelector('.calculator .clear')
 
 calculatorButtonClear.addEventListener('click', buttonClearClick)
@@ -20,6 +25,8 @@ let firstInput = 0
 let input = 0
 let calculation = 0
 let checkOperator
+disableOperators()
+disableSpecialOperators()
 
 function buttonClick(event) {
     count++
@@ -29,12 +36,24 @@ function buttonClick(event) {
         calculation = firstInput
         resultField.innerText = firstInput
         disableOperands()
+        enableOperators()
+        enableSpecialOperators()
     } else if (count === 2) {
         input = event.target.value
         inputField.innerText = input
         enableOperands()
         disableOperators()
-    } else if (!Number.isInteger(input)){
+        disableSpecialOperators()
+    } else if (input === "root" || input === "square"){
+        checkOperator = input
+        input = event.target.value
+        operators()
+        inputField.innerText = input
+        resultField.innerText = calculation
+        enableOperands()
+        enableOperators()
+        disableSpecialOperators()
+    } else if (typeof input != 'number') {   
         checkOperator = input
         input = parseInt(event.target.value)
         operators()
@@ -42,13 +61,26 @@ function buttonClick(event) {
         resultField.innerText = calculation
         disableOperands()
         enableOperators()
-    } else if (Number.isInteger(input)) {
+        enableSpecialOperators()
+    } else if (typeof input === 'number' || input === "root" || input === "square") {
         input = event.target.value
         inputField.innerText = input
         enableOperands()
         disableOperators()
+        enableSpecialOperators()
     }
-}   
+}
+function buttonClickSpecial(event) {
+    count++
+    if ((typeof input === 'number') || input === "root" || input === "square") {   
+        input = event.target.value
+        specialOperators()
+        resultField.innerText = calculation
+    }    
+}
+
+
+   
 
 function buttonClearClick() {
     inputField.innerText = 0
@@ -56,6 +88,8 @@ function buttonClearClick() {
     count = 0
     enableOperands()
     enableOperators()
+    disableOperators()
+    disableSpecialOperators()
 }
 
 
@@ -69,6 +103,14 @@ function operators() {
     } else if (checkOperator === "/") {
         calculation /= input
     } 
+}
+
+function specialOperators() {
+    if (input === "root") {
+        calculation = Math.sqrt(calculation)
+    } else if (input === "square") {
+        calculation = (calculation * calculation)
+    }
 }
 
 function disableOperands() {
@@ -100,8 +142,6 @@ function disableOperators() {
     calculatorButtonOperator[1].disabled = true
     calculatorButtonOperator[2].disabled = true
     calculatorButtonOperator[3].disabled = true
-    calculatorButtonOperator[4].disabled = true
-    calculatorButtonOperator[5].disabled = true
 }
 
 function enableOperators() {
@@ -109,7 +149,16 @@ function enableOperators() {
     calculatorButtonOperator[1].disabled = false
     calculatorButtonOperator[2].disabled = false
     calculatorButtonOperator[3].disabled = false
-    calculatorButtonOperator[4].disabled = false
-    calculatorButtonOperator[5].disabled = false
 }
+
+function disableSpecialOperators() {
+    calculatorButtonOperatorSpecial[0].disabled = true
+    calculatorButtonOperatorSpecial[1].disabled = true
+}
+
+function enableSpecialOperators() {
+    calculatorButtonOperatorSpecial[0].disabled = false
+    calculatorButtonOperatorSpecial[1].disabled = false
+}
+
 
